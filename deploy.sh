@@ -27,10 +27,10 @@ elif [ -f .env ]; then
 else
     # .env 파일 생성 (필요한 환경 변수 설정)
     # 환경 변수 설정
-    cat << 'EOF' > .env
-    OPENAI_API_KEY=${OPENAI_API_KEY}
-    TAVILY_API_KEY=${TAVILY_API_KEY}
-    EOF 
+    cat << EOF > .env
+OPENAI_API_KEY=${OPENAI_API_KEY}
+TAVILY_API_KEY=${TAVILY_API_KEY}
+EOF 
     sudo chown ubuntu:ubuntu .env
     echo "New .env file created"
 fi # .env 파일 생성
@@ -60,6 +60,12 @@ fi
 export PATH="/home/ubuntu/miniconda/bin:$PATH"
 source /home/ubuntu/miniconda/bin/activate
 
+# Update and install Nginx if not already installed
+if ! command -v nginx > /dev/null; then
+    echo "Installing Nginx"
+    sudo apt-get update
+    sudo apt-get install -y nginx
+fi
 
 # Nginx 설정
 echo "Configuring Nginx..."
@@ -79,6 +85,7 @@ server {
     }
 }
 EOF'
+
 
 
 # Nginx 설정 심볼릭 링크 생성
@@ -113,12 +120,7 @@ echo "Installing dependencies..."
 pip install -r requirements.txt
 
 
-# Update and install Nginx if not already installed
-if ! command -v nginx > /dev/null; then
-    echo "Installing Nginx"
-    sudo apt-get update
-    sudo apt-get install -y nginx
-fi
+
 
 
 # Nginx 설정 테스트 및 재시작
